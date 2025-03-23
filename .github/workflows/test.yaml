@@ -26,3 +26,7 @@ jobs:
         env:
           COMMIT_MESSAGES: ${{ toJson(github.event.commits.*.message) }}
         run: echo "$COMMIT_MESSAGES" | jq '.[-1]'
+      - name: merge commit message
+        env:
+          COMMIT_MESSAGES: ${{ toJson(github.event.commits.*.message) }}
+        run: echo "$COMMIT_MESSAGES" | jq '.[-1]' | jq 'split("\n")[0]'
