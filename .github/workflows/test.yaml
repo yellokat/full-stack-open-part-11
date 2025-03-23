@@ -10,23 +10,10 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v4
-      - name: github context
-        env:
-          GITHUB_CONTEXT: ${{ toJson(github) }}
-        run: echo "$GITHUB_CONTEXT"
-      - name: commits
-        env:
-          COMMITS: ${{ toJson(github.event.commits) }}
-        run: echo "$COMMITS"
-      - name: commit messages
-        env:
-          COMMIT_MESSAGES: ${{ toJson(github.event.commits.*.message) }}
-        run: echo "$COMMIT_MESSAGES"
-      - name: latest commit message
-        env:
-          COMMIT_MESSAGES: ${{ toJson(github.event.commits.*.message) }}
-        run: echo "$COMMIT_MESSAGES" | jq '.[-1]'
-      - name: merge commit message
-        env:
-          COMMIT_MESSAGES: ${{ toJson(github.event.commits.*.message) }}
-        run: echo "$COMMIT_MESSAGES" | jq '.[-1]' | jq 'split("\n")[0]'
+      - name: Extract last commit message
+        run: |
+          LAST_COMMIT_MESSAGE=$(jq -r '.[-1].message | split("\n")[0]' <<< '${{ toJson(github.event.commits) }}')
+          echo "LAST_COMMIT_MESSAGE=$LAST_COMMIT_MESSAGE" >> $GITHUB_ENV
+      - name: Check if last commit message contains "#skip"
+        if: !contains(env.LAST_COMMIT_MESSAGE, '#skip')
+        run: echo "'#skip' detected, skipping workflow"
