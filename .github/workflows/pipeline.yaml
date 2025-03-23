@@ -19,5 +19,9 @@ jobs:
         run: npm run eslint
       - name: Build Project
         run: npm run build
-      - name: Run Tests
+      - name: Run Unit Tests
         run: npm test
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
+      - name: Run Playwright E2E tests
+        run: npm run test:e2e
