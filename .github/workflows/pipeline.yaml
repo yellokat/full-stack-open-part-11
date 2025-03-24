@@ -32,6 +32,27 @@ jobs:
         run: npm run test:e2e
       - name: Trigger deployment
         run: curl https://api.render.com/deploy/srv-${{ secrets.RENDER_SERVICE_ID }}?key=${{ secrets.RENDER_API_KEY }}
+      - name: notify discord on success
+        uses: rjstone/discord-webhook-notify@v1
+        with:
+          severity: info
+          username: DiscordBot
+          avatarUrl: https://github.com/UniversityofHelsinki.png
+          description: To https://full-stack-open-part-11.onrender.com/ by yellokat
+          footer: Severity - Informational.
+          text: A new version of PokeDex deployed.
+          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+      - name: notify discord on failure
+        if: ${{ failure() }}
+        uses: rjstone/discord-webhook-notify@v1
+        with:
+          severity: error
+          username: DiscordBot
+          avatarUrl: https://github.com/UniversityofHelsinki.png
+          description: Build error has occured due to commit https://github.com/yellokat/full-stack-open-part-11/commit/${{ env.GITHUB_SHA }}.
+          footer: Severity - Error.
+          text: Build Failed.
+          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
   tag_release:
     name: Tag for release
     if: ${{ github.event_name == 'push' }}
