@@ -41,7 +41,7 @@ jobs:
           title: "Build failed."
           description: |
             Build error has occured
-            due to commit https://github.com/yellokat/full-stack-open-part-11/commit/${{ env.GITHUB_SHA }}.
+            due to commit ${{github.event.head_commit.url}}.
           color : 0xbb2124
   tag_release:
     name: Tag for release
